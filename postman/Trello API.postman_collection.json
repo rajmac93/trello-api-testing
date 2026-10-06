@@ -1,0 +1,586 @@
+{
+  "info": {
+    "_postman_id": "69d65ea7-165b-4ade-919d-adc8fd2ce96e",
+    "name": "Trello API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "58068235",
+    "_collection_link": "https://go.postman.co/collection/58068235-69d65ea7-165b-4ade-919d-adc8fd2ce96e?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Create Board",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "let jsonData = pm.response.json();\nlet createdBoardName = pm.environment.get(\"myBoardName\");\n\npm.environment.set(\"myBoardID\", jsonData.id);\npm.environment.set(\"myBoardName\", jsonData.name);\n\npm.test(\"Response contains id\", function () {\n    pm.expect(jsonData).to.have.property(\"id\");\n});\n\npm.test(\"Response contains name\", function () {\n    pm.expect(jsonData).to.have.property(\"name\");\n});\n\npm.test(\"Response contains url\", function () {\n    pm.expect(jsonData).to.have.property(\"url\");\n});\npm.test(\"Correct board name\", function () {\n    pm.expect(jsonData.name).to.eql(createdBoardName);\n});\n\n"
+            ]
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// Generate a random 3-digit number\nlet randomNum = Math.floor(Math.random() * 1000)\n    .toString().padStart(3, '0');\n\n// Create the dynamic value\nlet uniqueValue = `myboard${randomNum}`;\n\n// Set it as an environment variable\npm.environment.set(\"myBoardName\", uniqueValue);\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}1/boards/?key={{keyAPI}}&token={{token}}&name={{myBoardName}}",
+          "host": [
+            "{{baseURL}}1"
+          ],
+          "path": [
+            "boards",
+            ""
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "{{keyAPI}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            },
+            {
+              "key": "name",
+              "value": "{{myBoardName}}"
+            }
+          ]
+        },
+        "description": "Generated from cURL: curl --request POST \\\n  --url 'https://api.trello.com/1/boards/?name={name}' \\\n  --header 'Authorization: Bearer <access_token>'"
+      },
+      "response": []
+    },
+    {
+      "name": "Verify Created Board",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "let jsonData = pm.response.json();\n\npm.test(\"Veryfications is it created\", function () {\n    pm.expect(jsonData.closed).to.eql(false);\n});\npm.test(\"Status code is 200\", function () {\n    pm.response.to.have.status(200);\n});\n\n\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseURL}}/1/boards/{{myBoardID}}?key={{keyAPI}}&token={{token}}",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "1",
+            "boards",
+            "{{myBoardID}}"
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "{{keyAPI}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        },
+        "description": "Generated from cURL: curl --request GET \\\n  --url 'https://api.trello.com/1/boards/{id}/memberships' \\\n  --header 'Authorization: Bearer <access_token>' \\\n  --header 'Accept: application/json'"
+      },
+      "response": []
+    },
+    {
+      "name": "Create List",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// Generuj losową nazwę listy w formacie \"myList\" + losowa liczba 3-cyfrowa\n\nlet randomNum = Math.floor(Math.random() * 900) + 100; // liczba od 100 do 999\nlet myListName = `myList${randomNum}`;\n\n\n\nconsole.log(\"Nazwa listy:\", myListName);\n\npm.environment.set(\"myListName\", myListName);"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "let jsonData = pm.response.json();\nlet createdListName = pm.environment.get(\"MyListName\");\nlet myListID = jsonData.id;\npm.environment.set(\"myListID\", myListID);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/1/lists?name={{myListName}}&idBoard={{myBoardID}}&key={{keyAPI}}&token={{token}}",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "1",
+            "lists"
+          ],
+          "query": [
+            {
+              "key": "name",
+              "value": "{{myListName}}"
+            },
+            {
+              "key": "idBoard",
+              "value": "{{myBoardID}}"
+            },
+            {
+              "key": "key",
+              "value": "{{keyAPI}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        },
+        "description": "Generated from cURL: curl --request POST \\\n  --url 'https://api.trello.com/1/lists?name={name}&idBoard=5abbe4b7ddc1b351ef961414' \\\n  --header 'Authorization: Bearer <access_token>'"
+      },
+      "response": []
+    },
+    {
+      "name": "Verify Created List",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "let jsonData = pm.response.json();\n\npm.test(\"Veryfications is it created\", function () {\n    pm.expect(jsonData.closed).to.eql(false);\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseURL}}/1/lists/{{myListID}}?key={{keyAPI}}&token={{token}}",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "1",
+            "lists",
+            "{{myListID}}"
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "{{keyAPI}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        },
+        "description": "Generated from cURL: curl --request GET \\\n  --url 'https://api.trello.com/1/boards/{id}/memberships' \\\n  --header 'Authorization: Bearer <access_token>' \\\n  --header 'Accept: application/json'"
+      },
+      "response": []
+    },
+    {
+      "name": "Archive a list",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/1/lists/{{myListID}}/closed?value=true&key={{keyAPI}}&token={{token}}",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "1",
+            "lists",
+            "{{myListID}}",
+            "closed"
+          ],
+          "query": [
+            {
+              "key": "value",
+              "value": "true"
+            },
+            {
+              "key": "key",
+              "value": "{{keyAPI}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        },
+        "description": "Generated from cURL: curl --request PUT \\\n  --url 'https://api.trello.com/1/lists/{id}/closed' \\\n  --header 'Authorization: Bearer <access_token>'"
+      },
+      "response": []
+    },
+    {
+      "name": "Verify Archived List",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "let jsonData = pm.response.json();\n\npm.test(\"Veryfications List is it Archived\", function () {\n    pm.expect(jsonData.closed).to.eql(true);\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseURL}}/1/lists/{{myListID}}?key={{keyAPI}}&token={{token}}",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "1",
+            "lists",
+            "{{myListID}}"
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "{{keyAPI}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        },
+        "description": "Generated from cURL: curl --request GET \\\n  --url 'https://api.trello.com/1/boards/{id}/memberships' \\\n  --header 'Authorization: Bearer <access_token>' \\\n  --header 'Accept: application/json'"
+      },
+      "response": []
+    },
+    {
+      "name": "Unarchive a list",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/1/lists/{{myListID}}/closed?value=false&key={{keyAPI}}&token={{token}}",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "1",
+            "lists",
+            "{{myListID}}",
+            "closed"
+          ],
+          "query": [
+            {
+              "key": "value",
+              "value": "false"
+            },
+            {
+              "key": "key",
+              "value": "{{keyAPI}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        },
+        "description": "Generated from cURL: curl --request PUT \\\n  --url 'https://api.trello.com/1/lists/{id}/closed' \\\n  --header 'Authorization: Bearer <access_token>'"
+      },
+      "response": []
+    },
+    {
+      "name": "Verify Unarchived List",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "let jsonData = pm.response.json();\n\npm.test(\"Veryfications List is it unarchived\", function () {\n    pm.expect(jsonData.closed).to.eql(false);\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseURL}}/1/lists/{{myListID}}?key={{keyAPI}}&token={{token}}",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "1",
+            "lists",
+            "{{myListID}}"
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "{{keyAPI}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        },
+        "description": "Generated from cURL: curl --request GET \\\n  --url 'https://api.trello.com/1/boards/{id}/memberships' \\\n  --header 'Authorization: Bearer <access_token>' \\\n  --header 'Accept: application/json'"
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Board",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\n    pm.response.to.have.status(200);\n});\n\nlet jsonData = pm.response.json();\n\npm.test(\"value is null\", function () {\n    pm.expect(jsonData._value).to.eql(null);\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer <access_token>",
+            "disabled": true
+          }
+        ],
+        "url": {
+          "raw": "{{baseURL}}1/boards/{{myBoardID}}?key={{keyAPI}}&token={{token}}",
+          "host": [
+            "{{baseURL}}1"
+          ],
+          "path": [
+            "boards",
+            "{{myBoardID}}"
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "{{keyAPI}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        },
+        "description": "Generated from cURL: curl --request DELETE \\\n  --url 'https://api.trello.com/1/boards/{id}' \\\n  --header 'Authorization: Bearer <access_token>'"
+      },
+      "response": []
+    },
+    {
+      "name": "Verify Deleted Board",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 404 Not Found\", function () {\n    pm.response.to.have.status(404);\n});\n\npm.test(\"Board is succesfully deleted\", function () {\n    pm.expect(pm.response.text()).to.include(\"The requested resource was not found.\");\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer <access_token>",
+            "disabled": true
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseURL}}/1/boards/{{myBoardID}}?key={{keyAPI}}&token={{token}}",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "1",
+            "boards",
+            "{{myBoardID}}"
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "{{keyAPI}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        },
+        "description": "Generated from cURL: curl --request GET \\\n  --url 'https://api.trello.com/1/boards/{id}/memberships' \\\n  --header 'Authorization: Bearer <access_token>' \\\n  --header 'Accept: application/json'"
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "authUrl",
+        "value": "https://auth.atlassian.com/authorize?client_id=hxMHpwPbU0YqCAQlgg6xhiezCY7H39Uv&scope=write%3Aboard%3Atrello+offline_access&redirect_uri=https%3A%2F%2Fapi.trello.com%2F&response_type=code&prompt=consent&code_challenge_method=S256&code_challenge=PKCE_CODE_CHALLENGE",
+        "type": "string"
+      },
+      {
+        "key": "tokenName",
+        "value": "TOKEN_TEST_1",
+        "type": "string"
+      },
+      {
+        "key": "addTokenTo",
+        "value": "header",
+        "type": "string"
+      },
+      {
+        "key": "redirect_uri",
+        "value": "https://api.trello.com/",
+        "type": "string"
+      },
+      {
+        "key": "grant_type",
+        "value": "password_credentials",
+        "type": "string"
+      },
+      {
+        "key": "accessTokenUrl",
+        "value": "https://auth.atlassian.com/authorize?client_id=hxMHpwPbU0YqCAQlgg6xhiezCY7H39Uv&scope=write%3Aboard%3Atrello+offline_access&redirect_uri=https%3A%2F%2Fapi.trello.com%2F&response_type=code&prompt=consent&code_challenge_method=S256&code_challenge=PKCE_CODE_CHALLENGE",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "exec": [
+          "pm.test(\"Response time is less than 1000ms\", function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(1000);",
+          "});"
+        ],
+        "type": "text/javascript"
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "MyBoardName",
+      "value": ""
+    },
+    {
+      "key": "MyListName",
+      "value": ""
+    },
+    {
+      "key": "myListName",
+      "value": ""
+    }
+  ]
+}

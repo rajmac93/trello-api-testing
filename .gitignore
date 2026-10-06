@@ -1,0 +1,10 @@
+# Postman secrets / environments
+*.postman_environment.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
