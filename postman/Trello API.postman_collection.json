@@ -232,6 +232,15 @@
               "let jsonData = pm.response.json();\n\npm.environment.set(\"myCardID\", jsonData.id);"
             ]
           }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// Generuj losową nazwę karty w formacie \"myCard\" + losowa liczba 3-cyfrowa\n\nlet randomNum = Math.floor(Math.random() * 900) + 100; // liczba od 100 do 999\nlet myCardName = `myCardName${randomNum}`;\n\n\npm.environment.set(\"myCardName\", myCardName);"
+            ]
+          }
         }
       ],
       "request": {
@@ -246,7 +255,7 @@
           }
         ],
         "url": {
-          "raw": "https://api.trello.com/1/cards?idList={{myListID}}&key={{keyAPI}}&token={{token}}",
+          "raw": "https://api.trello.com/1/cards?idList={{myListID}}&key={{keyAPI}}&token={{token}}&name={{myCardName}}",
           "protocol": "https",
           "host": [
             "api",
@@ -269,6 +278,10 @@
             {
               "key": "token",
               "value": "{{token}}"
+            },
+            {
+              "key": "name",
+              "value": "{{myCardName}}"
             }
           ]
         },
@@ -325,6 +338,323 @@
           ]
         },
         "description": "Generated from cURL: curl --request GET \\\n  --url 'https://api.trello.com/1/cards/{id}' \\\n  --header 'Authorization: Bearer <access_token>' \\\n  --header 'Accept: application/json'"
+      },
+      "response": []
+    },
+    {
+      "name": "Update Board",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Board name is correct\", function () {\n    let responseJson = pm.response.json();\n    pm.expect(responseJson.name).to.eql(\"Updated board name\");\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"Updated board name\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://api.trello.com/1/boards/{{myBoardID}}?key={{keyAPI}}&token={{token}}",
+          "protocol": "https",
+          "host": [
+            "api",
+            "trello",
+            "com"
+          ],
+          "path": [
+            "1",
+            "boards",
+            "{{myBoardID}}"
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "{{keyAPI}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        },
+        "description": "Generated from cURL: curl --request PUT \\\n  --url 'https://api.trello.com/1/boards/{id}' \\\n  --header 'Authorization: Bearer <access_token>'"
+      },
+      "response": []
+    },
+    {
+      "name": "Verify Updated Board",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "let jsonData = pm.response.json();\n\npm.test(\"Veryfications is it updated\", function () {\n    pm.expect(jsonData.name).to.eql(\"Updated board name\");\n});\npm.test(\"Status code is 200\", function () {\n    pm.response.to.have.status(200);\n});\n\n\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseURL}}/1/boards/{{myBoardID}}?key={{keyAPI}}&token={{token}}",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "1",
+            "boards",
+            "{{myBoardID}}"
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "{{keyAPI}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        },
+        "description": "Generated from cURL: curl --request GET \\\n  --url 'https://api.trello.com/1/boards/{id}/memberships' \\\n  --header 'Authorization: Bearer <access_token>' \\\n  --header 'Accept: application/json'"
+      },
+      "response": []
+    },
+    {
+      "name": "Update List",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"List name is correct\", function () {\n    let responseJson = pm.response.json();\n    pm.expect(responseJson.name).to.eql(\"Updated list name\");\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"Updated list name\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://api.trello.com/1/lists/{{myListID}}?key={{keyAPI}}&token={{token}}",
+          "protocol": "https",
+          "host": [
+            "api",
+            "trello",
+            "com"
+          ],
+          "path": [
+            "1",
+            "lists",
+            "{{myListID}}"
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "{{keyAPI}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        },
+        "description": "Generated from cURL: curl --request PUT \\\n  --url 'https://api.trello.com/1/lists/{id}' \\\n  --header 'Authorization: Bearer <access_token>'"
+      },
+      "response": []
+    },
+    {
+      "name": "Verify Updated List",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "let jsonData = pm.response.json();\n\npm.test(\"Veryfications is it updated\", function () {\n    pm.expect(jsonData.name).to.eql(\"Updated list name\");\n});\npm.test(\"Status code is 200\", function () {\n    pm.response.to.have.status(200);\n});\n\n\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseURL}}/1/lists/{{myListID}}?key={{keyAPI}}&token={{token}}",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "1",
+            "lists",
+            "{{myListID}}"
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "{{keyAPI}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        },
+        "description": "Generated from cURL: curl --request GET \\\n  --url 'https://api.trello.com/1/boards/{id}/memberships' \\\n  --header 'Authorization: Bearer <access_token>' \\\n  --header 'Accept: application/json'"
+      },
+      "response": []
+    },
+    {
+      "name": "Update Card",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Card name is correct\", function () {\n    let responseJson = pm.response.json();\n    pm.expect(responseJson.name).to.eql(\"Updated card name\");\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"Updated card name\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseURL}}/1/cards/{{myCardID}}?key={{keyAPI}}&token={{token}}",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "1",
+            "cards",
+            "{{myCardID}}"
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "{{keyAPI}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        },
+        "description": "Generated from cURL: curl --request PUT \\\n  --url 'https://api.trello.com/1/cards/{id}' \\\n  --header 'Authorization: Bearer <access_token>' \\\n  --header 'Accept: application/json'"
+      },
+      "response": []
+    },
+    {
+      "name": "Verify Updated Card",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "let jsonData = pm.response.json();\n\npm.test(\"Veryfications is it updated\", function () {\n    pm.expect(jsonData.name).to.eql(\"Updated card name\");\n});\npm.test(\"Status code is 200\", function () {\n    pm.response.to.have.status(200);\n});\n\n\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseURL}}/1/cards/{{myCardID}}?key={{keyAPI}}&token={{token}}",
+          "host": [
+            "{{baseURL}}"
+          ],
+          "path": [
+            "1",
+            "cards",
+            "{{myCardID}}"
+          ],
+          "query": [
+            {
+              "key": "key",
+              "value": "{{keyAPI}}"
+            },
+            {
+              "key": "token",
+              "value": "{{token}}"
+            }
+          ]
+        },
+        "description": "Generated from cURL: curl --request GET \\\n  --url 'https://api.trello.com/1/boards/{id}/memberships' \\\n  --header 'Authorization: Bearer <access_token>' \\\n  --header 'Accept: application/json'"
       },
       "response": []
     },
